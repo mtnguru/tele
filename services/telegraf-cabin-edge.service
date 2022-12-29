@@ -1,0 +1,18 @@
+[Unit]
+Description=The plugin-driven server agent for reporting metrics into InfluxDB
+Documentation=https://github.com/influxdata/telegraf
+After=remote-fs.service mosquitto.service
+
+[Service]
+EnvironmentFile=-/etc/default/telegraf
+User=js
+ExecStart=/apps/telegraf/bin/telegraf --config /apps/telegraf/config/telegraf-cabin-edge.conf --debug > /tmp/tel-cabin-edge.log 2>&1
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartForceExitStatus=SIGPIPE
+KillMode=control-group
+StandardOutput=file:/tmp/tel-edge.log
+StandardError=file:/tmp/tel-edge.log
+
+[Install]
+WantedBy=multi-user.target
